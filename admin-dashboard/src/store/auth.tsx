@@ -21,17 +21,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const t = getToken();
+    console.debug('[auth] useEffect: token from localStorage:', t?.slice(0, 12) ?? 'NONE');
     if (!t) { setLoading(false); return; }
     api.get<AuthUser>('/api/auth/me')
       .then((u) => setUser(u))
-      .catch(() => { setToken(null); })
+      .catch((e) => { console.warn('[auth] /me failed:', e); setToken(null); })
       .finally(() => setLoading(false));
   }, []);
 
   async function login(email: string, password: string) {
+    console.debug('[auth] login:', email);
     const res = await api.post<{ token: string }>('/api/auth/login', { email, password });
+    console.debug('[auth] login response:', { hasToken: !!res.token, tokenLen: res.token?.length });
     setToken(res.token);
+    console.debug('[auth] token set, localStorage check:', localStorage.getItem('mitra_token')?.slice(0, 12));
     const me = await api.get<AuthUser>('/api/auth/me');
+    console.debug('[auth] /me response:', { id: me.id, role: me.role });
     setUser(me);
   }
 

@@ -9,22 +9,29 @@ export class ApiError extends Error {
   }
 }
 
-let token: string | null = null;
 const TOKEN_KEY = 'mitra_token';
+
+// Always read from localStorage — never from a module variable. Vite HMR
+// resets module state on every edit, which would silently drop an in-memory
+// token between setToken() and the next request().
+export function getToken(): string | null {
+  try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
+}
+
 export function setToken(t: string | null) {
-  token = t;
   try {
     if (t) localStorage.setItem(TOKEN_KEY, t);
     else localStorage.removeItem(TOKEN_KEY);
   } catch { /* SSR / private mode */ }
 }
-export function getToken() {
-  if (token) return token;
-  try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
-}
 
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const auth = getToken();
+  if (auth) {
+    console.debug(`[api] ${method} ${path} — sending Bearer token (${auth.slice(0, 12)}…)`);
+  } else {
+    console.debug(`[api] ${method} ${path} — NO token in localStorage`);
+  }
   const res = await fetch(`${BASE}${path}`, {
     method,
     headers: {
@@ -37,6 +44,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   const data = text ? JSON.parse(text) : {};
   if (!res.ok) {
     const err = data.error || {};
+    console.warn(`[api] ${method} ${path} → ${res.status}: ${err.message || 'Request failed'}`);
     throw new ApiError(res.status, err.code || 'error', err.message || 'Request failed', err.details);
   }
   return data as T;
