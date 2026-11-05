@@ -7,6 +7,9 @@ import Dashboard from './pages/Dashboard';
 import Hospitals from './pages/Hospitals';
 import HospitalDetail from './pages/HospitalDetail';
 import MapEditor from './pages/MapEditor';
+import { lazy, Suspense } from 'react';
+
+const PatientMapLazy = lazy(() => import('./pages/PatientMap'));
 import Feedback from './pages/Feedback';
 import Audit from './pages/Audit';
 import Users from './pages/Users';
@@ -23,6 +26,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/map" element={<Suspense fallback={<Loading label="Loading 3D map…" />}><PatientMapLazy /></Suspense>} />
       <Route element={<Protected><Layout /></Protected>}>
         <Route index element={<Dashboard />} />
         <Route path="hospitals" element={<Hospitals />} />

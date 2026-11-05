@@ -6,6 +6,7 @@ import { useTheme } from '../store/theme';
 const NAV = [
   { to: '/', label: 'Overview', icon: '⊞', end: true },
   { to: '/hospitals', label: 'Hospitals', icon: '🏥' },
+  { to: '/map', label: 'Patient Map', icon: '🗺️' },
   { to: '/feedback', label: 'Feedback', icon: '✎' },
   { to: '/audit', label: 'Audit Log', icon: '📋' },
   { to: '/users', label: 'Users & Roles', icon: '👥' },

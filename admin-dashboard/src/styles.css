@@ -92,6 +92,7 @@ button { font-family: inherit; }
 /* ---- Cards / panels ---- */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
 .card-pad { padding: 20px; }
+.card.selected { border: 2px solid var(--brand) !important; background: var(--brand-tint); }
 .card h2 { margin: 0 0 4px; font-size: 16px; }
 .card .muted { color: var(--text-muted); font-size: 13px; }
 
