@@ -31,13 +31,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     console.debug('[auth] login:', email);
-    const res = await api.post<{ token: string }>('/api/auth/login', { email, password });
-    console.debug('[auth] login response:', { hasToken: !!res.token, tokenLen: res.token?.length });
+    // Login response now includes permissions — no need for a second /me call
+    const res = await api.post<{ token: string; user: AuthUser }>('/api/auth/login', { email, password });
+    console.debug('[auth] login response:', { hasToken: !!res.token, tokenLen: res.token?.length, role: res.user?.role });
     setToken(res.token);
-    console.debug('[auth] token set, localStorage check:', localStorage.getItem('mitra_token')?.slice(0, 12));
-    const me = await api.get<AuthUser>('/api/auth/me');
-    console.debug('[auth] /me response:', { id: me.id, role: me.role });
-    setUser(me);
+    setUser(res.user);
   }
 
   function logout() {
