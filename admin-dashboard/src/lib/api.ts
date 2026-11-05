@@ -10,15 +10,26 @@ export class ApiError extends Error {
 }
 
 let token: string | null = null;
-export function setToken(t: string | null) { token = t; }
-export function getToken() { return token; }
+const TOKEN_KEY = 'mitra_token';
+export function setToken(t: string | null) {
+  token = t;
+  try {
+    if (t) localStorage.setItem(TOKEN_KEY, t);
+    else localStorage.removeItem(TOKEN_KEY);
+  } catch { /* SSR / private mode */ }
+}
+export function getToken() {
+  if (token) return token;
+  try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
+}
 
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const auth = getToken();
   const res = await fetch(`${BASE}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(auth ? { Authorization: `Bearer ${auth}` } : {}),
     },
     body: body ? JSON.stringify(body) : undefined,
   });
