@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+backend/node_modules/
+admin-dashboard/node_modules/
+
+# build artifacts
+dist/
+build/
+admin-dashboard/dist/
+admin-dashboard/tsconfig.tsbuildinfo
+backend/dist/
+
+# dart / flutter
+.dart_tool/
+.packages
+build/
+patient-app/build/
+patient-app/.dart_tool/
+
+# database (runtime data, not source)
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+backend/.data/
+backend/.env
+.env
+
+# logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# misc
+coverage/
+.turbo/
+.cache/
